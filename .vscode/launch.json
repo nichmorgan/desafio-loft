@@ -11,21 +11,7 @@
             "program": "${workspaceFolder}/src/main.py",
             "console": "integratedTerminal",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}"
-            }
-        },
-        {
-            "name": "Python: Test",
-            "type": "python",
-            "args": [
-                "-m",
-                "pytest"
-            ],
-            "request": "launch",
-            "program": "${workspaceFolder}/src/main.py",
-            "console": "integratedTerminal",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}"
+                "PYTHONPATH": "${workspaceFolder}/src"
             }
         }
     ]

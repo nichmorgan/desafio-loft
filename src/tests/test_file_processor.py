@@ -1,12 +1,10 @@
-from pathlib import Path
-from typing import Tuple
-import utils as test_utils
-from src.file_processor import process_files_to_dataframe
+from typing import Any, AnyStr, List, Tuple
+import file_processor
 
 
-def test_file_processor(tmp_path: Path, full_document_sample):
-    text, data = full_document_sample
-
-    test_utils.generate_pdf_files([text], tmp_path)
-    dataframe = process_files_to_dataframe(tmp_path, "*.pdf")
-    assert len(dataframe) == 1
+def test_text_processor(get_document_sample: Tuple[AnyStr, List[Any]]):
+    text, data = get_document_sample
+    dataframe_test = file_processor.process_text_to_series(text)
+    data[2] = data[2].strftime(r"%d/%m/%Y")
+    data[3] = data[3].strftime(r"%d/%m/%Y")
+    assert dataframe_test.values.tolist() == data

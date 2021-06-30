@@ -9,11 +9,11 @@ def generate_file_path(folder_path: Path, extension: AnyStr = "pdf") -> Path:
 
 
 def generate_pdf(text: str, pdf_path: Union[str, Path]) -> Path:
-    pdf_path = pdf_path if isinstance(
-        pdf_path, str) else pdf_path.absolute().as_posix()
+    if not isinstance(pdf_path, str):
+        pdf_path = pdf_path.absolute().as_posix()
     canvas = Canvas(pdf_path)
     for index, line in enumerate(text.splitlines()):
-        canvas.drawString(72, 72 + 1 * index, line)
+        canvas.drawString(72, 72 + 10 * index, line)
     canvas.save()
     return Path(pdf_path)
 
