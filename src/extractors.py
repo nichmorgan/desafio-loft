@@ -6,14 +6,14 @@ import re
 
 
 def __extract_by_regex(pattern: AnyStr, text: AnyStr, *,
-                       flag: re.RegexFlag = re.MULTILINE, only_first=True,
+                       flag: re.RegexFlag = re.MULTILINE, result_index: Optional[int] = 0,
                        parser: Callable = None, validator: Callable = None) -> Optional[Union[str, List[str]]]:
     """Base regex extractor.
 
     Args:
         pattern (AnyStr): Regex pattern.
         text (AnyStr): Target text.
-        only_first (bool): Return only the first result.
+        result_index (Optional[int]): Return result value by index - 0 default.
         parser (Callable): Parses string value.
         validator (Callable): Validate value after parser.
 
@@ -23,8 +23,8 @@ def __extract_by_regex(pattern: AnyStr, text: AnyStr, *,
 
     result_list = re.findall(pattern, text, flag)
     if len(result_list) > 0:
-        if only_first:
-            result = result_list[0]
+        if result_index is not None:
+            result = result_list[result_index]
             if parser:
                 result = parser(result)
             if validator:
@@ -55,7 +55,7 @@ def extract_unit_id(text: AnyStr) -> Optional[int]:
     def validator(unit_id: int) -> Optional[int]:
         return unit_id if unit_id > 0 else None
 
-    return __extract_by_regex(r"(\d+)(?=\n.*1\.)", text, parser=int, validator=validator, flag=re.DOTALL)
+    return __extract_by_regex(r"(\d+)(?=.*\n1\.)", text, parser=int, validator=validator, flag=re.DOTALL, result_index=-1)
 
 
 def extract_sale_price(text: AnyStr) -> Optional[float]:
@@ -88,7 +88,7 @@ def extract_contract_date(text: AnyStr) -> Optional[datetime.date]:
     """
 
     def parser(contract_date: str) -> datetime.date:
-        return datetime.strptime(contract_date, r"%d/%m/%Y").date()
+        return datetime.strptime(contract_date.replace("\n", ""), r"%d/%m/%Y").date()
 
     return __extract_by_regex(r"(?<=6\.2\.).*(\d{2}/\d{2}/\d{4})", text, flag=re.DOTALL, parser=parser)
 
@@ -102,6 +102,9 @@ def extract_deed_date(text: AnyStr, contract_date: datetime.date) -> Optional[da
     Returns:
         Optional[datetime.date]: Deed date or None
     """
+
+    if not contract_date:
+        raise ValueError("Contract date is None!")
 
     def parser(deed_days: str) -> datetime.date:
         return contract_date + timedelta(days=int(deed_days))

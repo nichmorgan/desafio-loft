@@ -1,6 +1,6 @@
 from typing import Union
 from pathlib import Path
-import PyPDF2
+import fitz
 
 
 def extract_all_pages_text(file_path: Union[Path, str]) -> str:
@@ -19,9 +19,9 @@ def extract_all_pages_text(file_path: Union[Path, str]) -> str:
     if not (file_path.exists() or file_path.is_file()):
         raise FileExistsError(
             f"The file {file_path.absolute().as_posix()} not exists!")
-    with open(file_path, "rb") as file:
-        file_reader = PyPDF2.PdfFileReader(file)
-        text: str = ""
-        for page in file_reader.pages:
-            text += "\n" + page.extractText()
-        return text.strip()
+
+    document = fitz.Document(file_path.absolute().as_posix())
+    text: str = ""
+    for page in document:
+        text += " " + page.get_text()
+    return text.strip()
