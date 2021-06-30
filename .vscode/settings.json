@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "C:\\Users\\nichm\\.virtualenvs\\Loft_teste-UX7p2VhA\\Scripts\\python.exe",
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "pythonTestExplorer.testFramework": "pytest",
+}
